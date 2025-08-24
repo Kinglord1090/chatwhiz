@@ -2,7 +2,6 @@
 
 ChatWhiz is a lightweight, modular chat application framework designed for building and running AI-assisted chat systems. It combines traditional information retrieval with modern embeddings, allowing you to create a fast, extensible, and secure chat pipeline. The project comes with monitoring utilities, modular components for embedding and retrieval, and a simple web-based frontend.
 
----
 
 ## Features
 
@@ -14,7 +13,6 @@ ChatWhiz is a lightweight, modular chat application framework designed for build
 * **Configurable**: All key parameters are managed through `config.yaml` and `.env.template` for environment setup.
 * **Extensible LLM Support**: Includes `llm.py` for integrating large language models into the chat pipeline.
 
----
 
 ## Installation
 
@@ -40,7 +38,6 @@ ChatWhiz is a lightweight, modular chat application framework designed for build
    * Copy `.env.template` to `.env` and fill in the required values (API keys, secrets, etc.).
    * Adjust `config.yaml` for retrieval settings, paths, or model parameters.
 
----
 
 ## Usage
 
@@ -71,7 +68,6 @@ ChatWhiz is a lightweight, modular chat application framework designed for build
      python monitor_progress.py
      ```
 
----
 
 ## Project Structure
 
@@ -93,16 +89,15 @@ ChatWhiz/
 └── README.md
 ```
 
----
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
 
 ## Acknowledgments
 
 * Inspired by **retrieval-augmented generation (RAG)** systems.
 * Uses **BM25** and vector search techniques for hybrid retrieval.
 * Thanks to the open-source community for libraries enabling embeddings, encryption, and retrieval backends.
+
