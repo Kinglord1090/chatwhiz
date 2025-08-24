@@ -1,212 +1,108 @@
-# ChatWhiz v2 - Advanced Chat Search System
+# ChatWhiz 💬⚡
 
-An intelligent semantic search system for chat exports with support for WhatsApp, JSON, and CSV formats. Features include semantic search, BM25 keyword search, hybrid search, and an AI-powered Q&A assistant.
-
-## 🚀 Features
-
-### Search Capabilities
-- **Semantic Search**: Find messages by meaning using state-of-the-art embeddings
-- **BM25 Search**: Traditional keyword-based search
-- **Hybrid Search**: Combines semantic and keyword search for best results
-- **AI Assistant**: Built-in Q&A system that analyzes and answers questions about your chats
-
-### Advanced Features
-- **Real-time Progress Tracking**: Detailed progress updates with decimal precision
-- **Persistent State**: Automatically resumes interrupted indexing after restart
-- **Batch Processing**: Efficient handling of large chat files
-- **Smart Caching**: Reuses embeddings to speed up re-indexing
-- **Clean Shutdown**: Gracefully handles interruptions with state preservation
-
-### File Support
-- WhatsApp chat exports (.txt)
-- JSON format chat files
-- CSV format chat files
-- Automatic format detection
-- Encryption detection
-
-## 📋 Requirements
-
-- Python 3.8 or higher
-- 4GB+ RAM recommended
-- CUDA-capable GPU (optional, for faster processing)
-
-## 🛠️ Installation
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/yourusername/ChatWhiz_v2.git
-cd ChatWhiz_v2
-```
-
-2. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-3. **Configure settings** (optional)
-```bash
-# Copy the template
-cp .env.template .env
-
-# Edit config.yaml to customize settings
-```
-
-## 🚀 Quick Start
-
-1. **Start the server**
-```bash
-python start_server.py
-```
-
-2. **Open the web interface**
-   - Navigate to http://localhost:8000 in your browser
-   - The modern UI will load automatically
-
-3. **Upload and index your chats**
-   - Click the "Upload & Index" tab
-   - Drag and drop or select your chat files
-   - Click "Process & Index" to start
-
-4. **Search your chats**
-   - Switch to the "Search" tab
-   - Enter your query
-   - Choose search mode (Semantic/BM25/Hybrid)
-   - View results and use the AI Assistant for insights
-
-## 🔧 Configuration
-
-### config.yaml Options
-
-```yaml
-# Embedding model configuration
-embedding_model: 'hkunlp/instructor-large'
-device: 'auto'  # 'auto', 'cpu', or 'cuda'
-
-# Search settings
-retrieval_mode: 'semantic'
-top_k: 5
-similarity_threshold: 0.3
-
-# Directory settings
-data_dir: 'data'
-vectorstore_dir: 'data/vectorstore'
-bm25_dir: 'data/bm25'
-cache_dir: 'data/cache'
-```
-
-### Environment Variables (.env)
-
-```bash
-# Optional: External LLM configuration
-OPENAI_API_KEY=your_key_here
-ANTHROPIC_API_KEY=your_key_here
-```
-
-## 🎯 Usage Examples
-
-### Search Modes
-
-**Semantic Search**: Best for conceptual queries
-- "discussions about vacation plans"
-- "messages expressing happiness"
-- "technical problems mentioned"
-
-**BM25 Search**: Best for exact terms
-- Specific names or phrases
-- Exact keyword matches
-- Technical terms
-
-**Hybrid Search**: Balanced approach
-- Combines both methods
-- Best overall accuracy
-
-### AI Assistant
-
-Ask questions like:
-- "Who talked most about travel?"
-- "What were the main topics discussed?"
-- "How many messages mention food?"
-- "When was the project deadline mentioned?"
-
-## 📁 Project Structure
-
-```
-ChatWhiz_v2/
-├── api/
-│   ├── server.py          # FastAPI backend
-│   └── static/
-│       ├── index.html     # Web interface
-│       └── app.js         # Frontend logic
-├── modules/
-│   ├── embedder.py        # Embedding generation
-│   ├── vector_store.py    # FAISS vector storage
-│   ├── bm25_store.py      # BM25 index
-│   ├── retriever.py       # Search implementation
-│   ├── loader.py          # File parsing
-│   ├── llm.py             # LLM integration
-│   └── encryptor.py       # Encryption detection
-├── data/                  # Generated data (gitignored)
-├── config.yaml            # Configuration
-├── requirements.txt       # Dependencies
-└── start_server.py        # Server launcher
-```
-
-## 🔍 API Endpoints
-
-- `GET /` - Web interface
-- `GET /api/status` - System status
-- `POST /api/search` - Search messages
-- `POST /api/rag` - AI Assistant queries
-- `POST /api/upload` - Upload files
-- `GET /api/task/{id}` - Check task progress
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**"No module named 'modules'"**
-- Run from the project root directory
-- Use `python start_server.py` instead of running server.py directly
-
-**GPU not detected**
-- Install CUDA toolkit and PyTorch with CUDA support
-- Set `device: 'cpu'` in config.yaml to use CPU only
-
-**Indexing interrupted**
-- Simply restart the server - it will resume automatically
-- Check `data/indexing_state.json` for saved state
-
-**Search returns no results**
-- Ensure files are properly indexed (check Analytics tab)
-- Try different search modes
-- Lower the similarity threshold
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- [Instructor Embeddings](https://instructor-embedding.github.io/) for semantic search
-- [FAISS](https://github.com/facebookresearch/faiss) for vector storage
-- [FastAPI](https://fastapi.tiangolo.com/) for the backend framework
-- [Tailwind CSS](https://tailwindcss.com/) for the UI design
-
-## 📞 Support
-
-For issues and questions:
-- Open an issue on GitHub
-- Check existing issues for solutions
-- Provide logs and error messages when reporting bugs
+ChatWhiz is a lightweight, modular chat application framework designed for building and running AI-assisted chat systems. It combines traditional information retrieval with modern embeddings, allowing you to create a fast, extensible, and secure chat pipeline. The project comes with monitoring utilities, modular components for embedding and retrieval, and a simple web-based frontend.
 
 ---
 
-**Note**: This is a local, privacy-focused application. All data processing happens on your machine, and no data is sent to external servers unless you configure external LLM providers.
+## Features
+
+* **Modular Architecture**: Organized into clearly separated modules (`embedder`, `retriever`, `vector_store`, etc.), making it easy to extend and customize.
+* **Hybrid Retrieval**: Supports both **BM25** (lexical) and **vector-based** search for powerful and efficient query handling.
+* **Encryption Support**: Built-in encryption utilities ensure chat data is stored securely.
+* **Progress Monitoring**: Includes scripts like `monitor_progress.py` and `check_state.py` for inspecting indexing and runtime state.
+* **Web API & Frontend**: A lightweight API (`api/server.py`) with static assets (`index.html`, `app.js`) for quick deployment of a chat UI.
+* **Configurable**: All key parameters are managed through `config.yaml` and `.env.template` for environment setup.
+* **Extensible LLM Support**: Includes `llm.py` for integrating large language models into the chat pipeline.
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Kinglord1090/ChatWhiz.git
+   cd ChatWhiz
+   ```
+
+2. Create a virtual environment and install dependencies:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # On Linux/Mac
+   venv\Scripts\activate      # On Windows
+
+   pip install -r requirements.txt
+   ```
+
+3. Configure environment variables:
+
+   * Copy `.env.template` to `.env` and fill in the required values (API keys, secrets, etc.).
+   * Adjust `config.yaml` for retrieval settings, paths, or model parameters.
+
+---
+
+## Usage
+
+1. Start the server:
+
+   ```bash
+   python start_server.py
+   ```
+
+2. Open your browser and navigate to:
+
+   ```
+   http://localhost:5000
+   ```
+
+   This will launch the ChatWhiz web interface.
+
+3. Optional utilities:
+
+   * Check the indexing state:
+
+     ```bash
+     python check_state.py
+     ```
+   * Monitor progress:
+
+     ```bash
+     python monitor_progress.py
+     ```
+
+---
+
+## Project Structure
+
+```
+ChatWhiz/
+├── api/                # API server & static frontend
+│   ├── server.py
+│   └── static/
+│       ├── index.html
+│       └── app.js
+├── modules/            # Core modules (embedding, retrieval, encryption, etc.)
+├── data/               # Storage for chats, indexes, caches, and processed data
+├── config.yaml         # Main configuration file
+├── .env.template       # Environment variable template
+├── requirements.txt    # Dependencies
+├── start_server.py     # Main entrypoint
+├── check_state.py      # Utility script
+├── monitor_progress.py # Utility script
+└── README.md
+```
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+* Inspired by **retrieval-augmented generation (RAG)** systems.
+* Uses **BM25** and vector search techniques for hybrid retrieval.
+* Thanks to the open-source community for libraries enabling embeddings, encryption, and retrieval backends.
