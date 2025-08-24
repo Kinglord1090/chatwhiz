@@ -1,0 +1,46 @@
+# ChatWhiz Configuration
+
+# Embedding Model Settings
+embedding_model: "hkunlp/instructor-large"
+instruction: "Represent the chat message for semantic search:"
+device: "auto"                   # auto / cpu / cuda
+# No chunking - each message is indexed individually
+
+# LLM Provider Settings
+llm_provider: "none"          # none / openai / ollama
+openai_api_key: ""
+openai_model: "gpt-3.5-turbo"
+ollama_model: "llama2"
+ollama_url: "http://localhost:11434"
+max_context_length: 2000
+
+# Security Settings
+store_encrypted: false
+
+# Retrieval Settings
+retrieval_mode: "semantic"    # semantic / bm25 / hybrid
+top_k: 5
+similarity_threshold: 0.3
+
+# Hybrid Search Weights
+hybrid_semantic_weight: 0.7
+hybrid_bm25_weight: 0.3
+
+# BM25 Settings
+bm25_tokenizer: "simple"      # simple / advanced
+bm25_min_score: 0.0
+
+# FAISS Index Settings
+index_type: "flat"            # flat / ivf / hnsw
+
+# Data Paths (Persistence)
+data_dir: "data"
+chats_dir: "data/chats"
+processed_dir: "data/processed"
+vectorstore_dir: "data/vectorstore"  # FAISS index storage
+bm25_dir: "data/bm25"               # BM25 data storage
+cache_dir: "data/cache"             # Precomputed embeddings
+
+# UI Settings
+streamlit_port: 8501
+streamlit_host: "localhost"

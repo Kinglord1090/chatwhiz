@@ -1,0 +1,33 @@
+# ChatWhiz - FastAPI Backend
+# FastAPI web framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+jinja2>=3.1.0
+
+# Core ML and NLP dependencies
+torch>=2.0.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+InstructorEmbedding>=1.0.1
+faiss-cpu>=1.7.4
+
+# Search and indexing
+rank-bm25>=0.2.2
+
+# Data processing
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# Configuration and utilities
+pyyaml>=6.0
+python-dotenv>=1.0.0
+cryptography>=41.0.0
+
+# LLM support
+openai>=1.0.0
+requests>=2.31.0  # For Ollama API
+
+# Additional utilities
+tqdm>=4.65.0      # Progress bars

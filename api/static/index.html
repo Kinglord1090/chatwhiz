@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatWhiz - Advanced Chat Search System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0f0f0f',
+                            card: '#1a1a1a',
+                            border: '#2a2a2a',
+                            hover: '#252525',
+                            text: '#e0e0e0',
+                            muted: '#a0a0a0'
+                        },
+                        accent: {
+                            primary: '#7c3aed',
+                            secondary: '#ec4899',
+                            success: '#10b981',
+                            warning: '#f59e0b',
+                            danger: '#ef4444',
+                            info: '#3b82f6'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient': 'gradient 15s ease infinite',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'fade-in': 'fadeIn 0.5s ease-out'
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(-45deg, #7c3aed, #ec4899, #3b82f6, #10b981);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        .glass-card {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card-hover:hover {
+            background: rgba(37, 37, 37, 0.9);
+            border-color: rgba(124, 58, 237, 0.3);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a4a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a5a5a;
+        }
+
+        /* Loading animation */
+        .loading-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(3, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Progress bar animation */
+        .progress-bar {
+            background: linear-gradient(90deg, #7c3aed, #ec4899);
+            transition: width 0.3s ease;
+        }
+
+        /* Tab indicator */
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #7c3aed, #ec4899);
+        }
+
+        /* Input focus effect */
+        .input-focus:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        /* Status indicator pulse */
+        .status-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Mobile responsive utilities */
+        @media (max-width: 768px) {
+            .mobile-menu {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .mobile-menu.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-dark-text min-h-screen">
+    <!-- Gradient Background Effect -->
+    <div class="fixed inset-0 opacity-5">
+        <div class="gradient-bg w-full h-full"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10">
+        <!-- Header -->
+        <header class="glass-card border-b border-dark-border sticky top-0 z-50">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Logo and Title -->
+                    <div class="flex items-center space-x-4">
+                        <div class="p-2 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg">
+                            <i class="fas fa-search text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold bg-gradient-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
+                                ChatWhiz
+                            </h1>
+                            <p class="text-xs text-dark-muted">Advanced Chat Search System</p>
+                        </div>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="flex items-center space-x-6">
+                        <!-- Status Indicator -->
+                        <div class="flex items-center space-x-2">
+                            <div id="status-indicator" class="w-2 h-2 rounded-full bg-yellow-500 status-pulse"></div>
+                            <span id="status-text" class="text-sm text-dark-muted">Initializing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <div class="container mx-auto px-4 py-6">
+            <div class="glass-card rounded-xl p-1 inline-flex w-full md:w-auto">
+                <button class="tab-btn relative px-6 py-3 rounded-lg font-medium transition-all tab-active" data-tab="search">
+                    <i class="fas fa-search mr-2"></i>
+                    <span class="hidden sm:inline">Search</span>
+                </button>
+                <button class="tab-btn relative px-6 py-3 rounded-lg font-medium transition-all" data-tab="upload">
+                    <i class="fas fa-upload mr-2"></i>
+                    <span class="hidden sm:inline">Upload & Index</span>
+                </button>
+                <button class="tab-btn relative px-6 py-3 rounded-lg font-medium transition-all" data-tab="analytics">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    <span class="hidden sm:inline">Analytics</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="container mx-auto px-4 pb-8">
+            <!-- Search Tab -->
+            <div id="search-tab" class="tab-content animate-fade-in">
+                <!-- Search Interface -->
+                <div class="glass-card rounded-2xl p-6 mb-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-search text-white"></i>
+                        </div>
+                        Search Your Chats
+                    </h2>
+
+                    <!-- Search Controls -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
+                        <div class="lg:col-span-7">
+                            <input 
+                                type="text" 
+                                id="search-query" 
+                                class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg input-focus transition-all"
+                                placeholder="What are you looking for?"
+                                autofocus
+                            >
+                        </div>
+                        <div class="lg:col-span-3">
+                            <select id="search-mode" class="w-full px-4 py-3 bg-dark-card border border-dark-border rounded-lg input-focus">
+                                <option value="semantic">🧠 Semantic</option>
+                                <option value="bm25">📝 BM25</option>
+                                <option value="hybrid">🔀 Hybrid</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <button 
+                                id="search-btn" 
+                                class="w-full px-6 py-3 bg-gradient-to-r from-accent-primary to-accent-secondary text-white rounded-lg font-medium hover:shadow-lg transition-all"
+                            >
+                                <i class="fas fa-search mr-2"></i>Search
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Options -->
+                    <div class="flex items-center space-x-4 text-sm">
+                        <!-- Placeholder for future advanced options -->
+                    </div>
+                </div>
+
+                <!-- Search Results -->
+                <div id="search-results" class="hidden animate-slide-up">
+                    <div class="glass-card rounded-2xl p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold flex items-center">
+                                <i class="fas fa-list text-accent-success mr-2"></i>
+                                Search Results
+                            </h3>
+                            <span id="results-count" class="text-sm text-dark-muted"></span>
+                        </div>
+                        <div id="results-container" class="space-y-4"></div>
+                    </div>
+                </div>
+
+                <!-- AI Assistant -->
+                <div id="ai-assistant" class="hidden animate-slide-up">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <i class="fas fa-robot text-accent-secondary mr-2"></i>
+                            AI Assistant
+                        </h3>
+                        <!-- LLM Provider Selection -->
+                        <div class="flex items-center space-x-4 mb-4">
+                            <label class="flex items-center space-x-2 text-sm">
+                                <span class="text-dark-muted">LLM Provider:</span>
+                                <select id="llm-provider" class="px-3 py-1 bg-dark-card border border-dark-border rounded">
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </label>
+                        </div>
+                        <div class="flex space-x-3 mb-4">
+                            <input 
+                                type="text" 
+                                id="ai-prompt" 
+                                class="flex-1 px-4 py-3 bg-dark-card border border-dark-border rounded-lg input-focus"
+                                placeholder="Ask a follow-up question about the results..."
+                            >
+                            <button 
+                                id="ai-ask-btn" 
+                                class="px-6 py-3 bg-gradient-to-r from-accent-secondary to-accent-primary text-white rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50"
+                                disabled
+                            >
+                                <i class="fas fa-paper-plane mr-2"></i>Ask
+                            </button>
+                        </div>
+                        <div id="ai-response" class="hidden">
+                            <div class="glass-card rounded-lg p-4">
+                                <div id="ai-answer" class="text-dark-text leading-relaxed"></div>
+                                <div id="ai-metadata" class="mt-4 pt-4 border-t border-dark-border text-xs text-dark-muted"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Tab -->
+            <div id="upload-tab" class="tab-content hidden">
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-accent-info to-accent-primary rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-upload text-white"></i>
+                        </div>
+                        Upload & Index Files
+                    </h2>
+
+                    <!-- File Upload Area -->
+                    <div class="mb-6">
+                        <div 
+                            id="drop-zone"
+                            class="border-2 border-dashed border-dark-border rounded-xl p-12 text-center hover:border-accent-primary hover:bg-dark-hover transition-all cursor-pointer"
+                        >
+                            <input type="file" id="file-input" multiple accept=".txt,.json,.csv" class="hidden">
+                            <i class="fas fa-cloud-upload-alt text-5xl text-dark-muted mb-4"></i>
+                            <p class="text-lg mb-2">Drop files here or click to browse</p>
+                            <p class="text-sm text-dark-muted">Supports: WhatsApp (.txt), JSON, CSV</p>
+                        </div>
+                    </div>
+
+                    <!-- Selected Files -->
+                    <div id="selected-files" class="hidden mb-6">
+                        <h4 class="text-sm font-medium text-dark-muted mb-3">Selected Files</h4>
+                        <div id="file-list" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Upload Actions -->
+                    <div class="flex items-center justify-between">
+                        <button 
+                            id="upload-btn" 
+                            class="px-6 py-3 bg-gradient-to-r from-accent-info to-accent-primary text-white rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50"
+                            disabled
+                        >
+                            <i class="fas fa-rocket mr-2"></i>Process & Index
+                        </button>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="rebuild-index" class="rounded">
+                            <span class="text-sm">Rebuild existing index</span>
+                        </label>
+                    </div>
+
+                    <!-- Progress Display -->
+                    <div id="indexing-progress" class="hidden mt-8">
+                        <div class="glass-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-medium">Indexing Progress</span>
+                                <span id="progress-percent" class="text-sm text-accent-primary font-mono">0.0%</span>
+                            </div>
+                            <div class="bg-dark-hover rounded-full h-2 mb-2 overflow-hidden">
+                                <div id="progress-bar" class="progress-bar h-full rounded-full" style="width: 0%"></div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i id="progress-spinner" class="fas fa-circle-notch fa-spin text-accent-primary text-sm"></i>
+                                <span id="progress-message" class="text-sm text-dark-muted">Initializing...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="tab-content hidden">
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-accent-warning to-accent-danger rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-chart-bar text-white"></i>
+                        </div>
+                        Analytics & System Status
+                    </h2>
+
+                    <!-- System Components -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Model Information -->
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-semibold mb-4 flex items-center">
+                                <i class="fas fa-microchip text-accent-info mr-2"></i>
+                                Model Information
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-dark-muted">Embedding Model:</span>
+                                    <span id="model-name" class="font-mono">Loading...</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-dark-muted">Device:</span>
+                                    <span id="model-device" class="font-mono">Loading...</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-dark-muted">LLM Provider:</span>
+                                    <span id="model-llm" class="font-mono">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Status -->
+                        <div class="glass-card rounded-xl p-6">
+                            <h3 class="text-lg font-semibold mb-4 flex items-center">
+                                <i class="fas fa-heartbeat text-accent-success mr-2"></i>
+                                Component Status
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">Embedder</span>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs text-dark-muted">Dim: <span id="component-dimension" class="font-mono text-accent-primary">0</span></span>
+                                        <span id="status-embedder" class="px-2 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400">Loading</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">Vector Store</span>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs text-dark-muted">Type: <span id="component-index-type" class="font-mono text-accent-secondary">flat</span></span>
+                                        <span id="status-vector" class="px-2 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400">Loading</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">BM25 Index</span>
+                                    <span id="status-bm25" class="px-2 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400">Loading</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">LLM Provider</span>
+                                    <span id="status-llm" class="px-2 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400">Loading</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+    <!-- Include the modern JavaScript as default -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
